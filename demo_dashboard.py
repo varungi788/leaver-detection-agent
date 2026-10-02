@@ -171,7 +171,7 @@ def main():
 
     # Sidebar
     with st.sidebar:
-        st.image("https://via.placeholder.com/150x50/FF4B4B/FFFFFF?text=DEMO+MODE", use_container_width=True)
+        st.markdown("### 🎯 DEMO MODE")
         st.markdown("### About This Demo")
         st.info("""
         This is a demonstration of an AI-driven insider threat detection platform
