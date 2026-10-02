@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaver Detection System - MITRE Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0E1117 0%, #1a1d29 100%);
+            color: #FAFAFA;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #262730;
+            padding: 2rem;
+            border-bottom: 3px solid #FF4B4B;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mitre-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF4B4B 0%, #ff6b6b 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: #262730;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #FF4B4B;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FF4B4B;
+        }
+
+        .section {
+            background: #262730;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #FF4B4B;
+        }
+
+        /* MITRE Matrix Styles */
+        .mitre-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .mitre-tactic-card {
+            background: #1a1d29;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-top: 4px solid;
+        }
+
+        .mitre-tactic-card.exfiltration {
+            border-top-color: #FF4136;
+        }
+
+        .mitre-tactic-card.collection {
+            border-top-color: #FF851B;
+        }
+
+        .mitre-tactic-card.credential-access {
+            border-top-color: #FFDC00;
+        }
+
+        .tactic-header {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coverage-percent {
+            font-size: 0.9rem;
+            background: #FF4B4B;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .technique-list {
+            list-style: none;
+        }
+
+        .technique-item {
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: #0E1117;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .technique-item.detected {
+            border-left: 4px solid #2ECC40;
+        }
+
+        .technique-item.not-detected {
+            opacity: 0.5;
+            border-left: 4px solid #666;
+        }
+
+        .technique-id {
+            font-weight: 600;
+            color: #FF4B4B;
+            font-family: monospace;
+        }
+
+        .finding-card {
+            background: #1a1d29;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF4136;
+        }
+
+        .mitre-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .mitre-tag {
+            background: #FF4B4B;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .coverage-chart {
+            background: #1a1d29;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .coverage-bar-container {
+            margin: 1rem 0;
+        }
+
+        .coverage-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .coverage-bar {
+            width: 100%;
+            height: 30px;
+            background: #0E1117;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .coverage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF4B4B, #ff6b6b);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .mitre-reference {
+            background: #1a1d29;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #2ECC40;
+            margin: 2rem 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>
+                🔍 Leaver Detection Agentic System
+                <span class="mitre-badge">MITRE ENHANCED</span>
+            </h1>
+            <p>AI-Powered Insider Threat Investigation with MITRE ATT&CK Framework Integration</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Top Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div style="color: #b3b3b3; margin-bottom: 0.5rem;">Risk Score</div>
+                <div class="metric-value">87.5/100</div>
+            </div>
+            <div class="metric-card">
+                <div style="color: #b3b3b3; margin-bottom: 0.5rem;">MITRE Techniques</div>
+                <div class="metric-value">4 Detected</div>
+            </div>
+            <div class="metric-card">
+                <div style="color: #b3b3b3; margin-bottom: 0.5rem;">Tactics Covered</div>
+                <div class="metric-value">3/11</div>
+            </div>
+            <div class="metric-card">
+                <div style="color: #b3b3b3; margin-bottom: 0.5rem;">Execution Time</div>
+                <div class="metric-value">47s</div>
+            </div>
+        </div>
+
+        <!-- MITRE Coverage Chart -->
+        <div class="section">
+            <h2>📊 MITRE Insider Threat Matrix Coverage</h2>
+            <div class="coverage-chart">
+                <div class="coverage-bar-container">
+                    <div class="coverage-label">
+                        <span><strong>Exfiltration</strong> (3/5 techniques)</span>
+                        <span>60%</span>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill" style="width: 60%;">60%</div>
+                    </div>
+                </div>
+
+                <div class="coverage-bar-container">
+                    <div class="coverage-label">
+                        <span><strong>Collection</strong> (2/4 techniques)</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill" style="width: 50%;">50%</div>
+                    </div>
+                </div>
+
+                <div class="coverage-bar-container">
+                    <div class="coverage-label">
+                        <span><strong>Credential Access</strong> (0/2 techniques)</span>
+                        <span>0%</span>
+                    </div>
+                    <div class="coverage-bar">
+                        <div class="coverage-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MITRE Techniques Detected -->
+        <div class="section">
+            <h2>🎯 MITRE Techniques Detected</h2>
+            <div class="mitre-matrix">
+                <div class="mitre-tactic-card exfiltration">
+                    <div class="tactic-header">
+                        <span>Exfiltration</span>
+                        <span class="coverage-percent">60%</span>
+                    </div>
+                    <ul class="technique-list">
+                        <li class="technique-item detected">
+                            <span class="technique-id">T0001</span>
+                            <span>Exfiltration to Personal Cloud Storage</span>
+                        </li>
+                        <li class="technique-item detected">
+                            <span class="technique-id">T0002</span>
+                            <span>Exfiltration via Email</span>
+                        </li>
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0003</span>
+                            <span>Exfiltration via Removable Media</span>
+                        </li>
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0004</span>
+                            <span>Exfiltration via Web Services</span>
+                        </li>
+                        <li class="technique-item detected">
+                            <span class="technique-id">T0010</span>
+                            <span>Scheduled Transfer</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mitre-tactic-card collection">
+                    <div class="tactic-header">
+                        <span>Collection</span>
+                        <span class="coverage-percent">50%</span>
+                    </div>
+                    <ul class="technique-list">
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0005</span>
+                            <span>Data Staging</span>
+                        </li>
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0006</span>
+                            <span>Automated Collection</span>
+                        </li>
+                        <li class="technique-item detected">
+                            <span class="technique-id">T0009</span>
+                            <span>Email Forwarding Rule</span>
+                        </li>
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0011</span>
+                            <span>Data from Cloud Storage</span>
+                        </li>
+                        <li class="technique-item detected">
+                            <span class="technique-id">T0012</span>
+                            <span>Data from Databases</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mitre-tactic-card credential-access">
+                    <div class="tactic-header">
+                        <span>Credential Access</span>
+                        <span class="coverage-percent" style="background: #666;">0%</span>
+                    </div>
+                    <ul class="technique-list">
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0007</span>
+                            <span>Service Account Credential Theft</span>
+                        </li>
+                        <li class="technique-item not-detected">
+                            <span class="technique-id">T0008</span>
+                            <span>Valid Account Abuse</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Findings with MITRE Mapping -->
+        <div class="section">
+            <h2>🚨 Critical Findings (MITRE Mapped)</h2>
+
+            <div class="finding-card">
+                <div style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;">
+                    [1] Bulk File Download to Personal Account
+                </div>
+                <div class="mitre-tags">
+                    <span class="mitre-tag">T0001 - Exfiltration to Personal Cloud</span>
+                    <span class="mitre-tag">T0011 - Data from Cloud Storage</span>
+                </div>
+                <p style="margin: 1rem 0;">
+                    <strong>Tactic:</strong> Exfiltration, Collection<br>
+                    <strong>Confidence:</strong> 95%<br>
+                    <strong>Description:</strong> Employee downloaded 47 files (2.3 GB) from company-source-code bucket
+                    and shared to personal Gmail account over 2-day period.
+                </p>
+            </div>
+
+            <div class="finding-card">
+                <div style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;">
+                    [2] Email Forwarding Rule to External Account
+                </div>
+                <div class="mitre-tags">
+                    <span class="mitre-tag">T0009 - Email Forwarding Rule</span>
+                    <span class="mitre-tag">T0002 - Exfiltration via Email</span>
+                </div>
+                <p style="margin: 1rem 0;">
+                    <strong>Tactic:</strong> Collection, Exfiltration<br>
+                    <strong>Confidence:</strong> 98%<br>
+                    <strong>Description:</strong> Auto-forward email rule created to forward all incoming emails
+                    to personal Gmail account.
+                </p>
+            </div>
+
+            <div class="finding-card">
+                <div style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;">
+                    [3] BigQuery Customer Data Export
+                </div>
+                <div class="mitre-tags">
+                    <span class="mitre-tag">T0012 - Data from Databases</span>
+                </div>
+                <p style="margin: 1rem 0;">
+                    <strong>Tactic:</strong> Collection<br>
+                    <strong>Confidence:</strong> 92%<br>
+                    <strong>Description:</strong> Exported customer analytics dataset (2.1M records) from BigQuery
+                    to external GCS bucket with PII included.
+                </p>
+            </div>
+        </div>
+
+        <!-- MITRE Reference -->
+        <div class="mitre-reference">
+            <h3 style="margin-bottom: 1rem;">📚 MITRE Insider Threat Matrix</h3>
+            <p style="margin-bottom: 1rem;">
+                This investigation leverages the <strong>MITRE Insider Threat Matrix</strong>, a knowledge base of
+                insider threat tactics and techniques based on real-world observations.
+            </p>
+            <p>
+                <strong>Learn more:</strong>
+                <a href="https://insiderthreatmatrix.org/" target="_blank" style="color: #FF4B4B;">
+                    insiderthreatmatrix.org
+                </a>
+            </p>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="section">
+            <h2>✨ Benefits of MITRE Integration</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                <div style="background: #1a1d29; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #FF4B4B; margin-bottom: 0.5rem;">Industry Standard</h3>
+                    <p>Aligned with recognized insider threat framework used by Fortune 500 companies and government agencies.</p>
+                </div>
+                <div style="background: #1a1d29; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #FF4B4B; margin-bottom: 0.5rem;">Better Communication</h3>
+                    <p>Common language across security, HR, legal, and compliance teams for clear threat communication.</p>
+                </div>
+                <div style="background: #1a1d29; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #FF4B4B; margin-bottom: 0.5rem;">Coverage Metrics</h3>
+                    <p>Quantifiable detection capabilities showing blind spots and priorities for improvement.</p>
+                </div>
+                <div style="background: #1a1d29; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #FF4B4B; margin-bottom: 0.5rem;">Threat Intelligence</h3>
+                    <p>Compare against known insider TTPs and track emerging threat trends in your environment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p style="margin-bottom: 0.5rem;">
+            <strong>Leaver Detection Agentic System</strong> | MITRE Insider Threat Matrix Integration
+        </p>
+        <p>Built by Insider Risk Analyst |
+            <a href="https://github.com/varungi788/leaver-detection-agent" style="color: #FF4B4B;">View on GitHub</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,16 +1,29 @@
 # Leaver Detection Agentic System
 
-An AI-driven insider threat detection platform for automated investigation of departing employees using multi-agent architecture and LLM-powered analysis.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaver-detection-agent.streamlit.app)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-red.svg)](https://insiderthreatmatrix.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+An AI-driven insider threat detection platform for automated investigation of departing employees using multi-agent architecture, LLM-powered analysis, and **MITRE ATT&CK Framework** integration.
+
+## 🌐 Live Demo
+
+**Try it now:** [https://leaver-detection-agent.streamlit.app](https://leaver-detection-agent.streamlit.app)
+
+*Interactive dashboard showcasing real-time insider threat investigation with MITRE technique mapping.*
 
 ## 🎯 Overview
 
 This system automates the detection and investigation of potential data exfiltration by departing employees through:
-- **Parallel multi-agent investigation** across GCP infrastructure
+- **MITRE Insider Threat Matrix integration** - Industry-standard threat categorization across 12 techniques
+- **Parallel multi-agent investigation** across GCP infrastructure  
 - **19+ automated telemetry checks** running simultaneously
 - **AI-powered risk scoring** and evidence correlation
+- **Automatic technique-to-finding mapping** with coverage reporting
 - **Sub-minute response time** from termination trigger to report
 
-Built to showcase enterprise-grade insider threat automation capabilities with simulated GCP telemetry data.
+Built to showcase enterprise-grade insider threat automation capabilities with simulated GCP telemetry data and aligned with industry-standard frameworks.
 
 ## 🏗️ Architecture
 
@@ -42,12 +55,15 @@ Built to showcase enterprise-grade insider threat automation capabilities with s
 ```
 
 ### Key Features
+- ✅ **MITRE ATT&CK Integration** - Automatic mapping to 12 insider threat techniques across 5 tactics
+- ✅ **Coverage Reporting** - Quantifiable detection metrics showing technique coverage by tactic
 - ✅ **19 Parallel Telemetry Checks** - Cloud storage, email, compute, audit logs
 - ✅ **False-Positive Suppression** - Deterministic filtering (>98% accuracy)
 - ✅ **Risk Scoring** - ML-based aggregation with confidence intervals
 - ✅ **Timeline Reconstruction** - Chronological evidence mapping
 - ✅ **LLM-Powered Analysis** - Claude API for intelligent pattern detection
 - ✅ **Evidence Packaging** - Legal-defensible investigation reports
+- ✅ **Industry Standard** - Aligned with MITRE Insider Threat Matrix (insiderthreatmatrix.org)
 
 ## 📊 Data Sources (Simulated GCP)
 
@@ -219,6 +235,12 @@ RECOMMENDATION: IMMEDIATE ESCALATION TO LEGAL
 - Designed automated termination pipelines at Uber (19-check system)
 - 1,000+ telemetry reviews across global operations
 - Google & Apple Security Hall of Fame
+
+## 🌐 Links
+
+- **Live Demo:** [https://leaver-detection-agent.streamlit.app](https://leaver-detection-agent.streamlit.app)
+- **GitHub:** [https://github.com/varungi788/leaver-detection-agent](https://github.com/varungi788/leaver-detection-agent)
+- **MITRE Reference:** [https://insiderthreatmatrix.org/](https://insiderthreatmatrix.org/)
 
 ## 📄 License
 

@@ -1,0 +1,3 @@
+AI-driven insider threat detection platform with MITRE ATT&CK integration, multi-agent architecture, and LLM-powered analysis. Live demo: https://leaver-detection-agent.streamlit.app
+
+Topics: insider-threat, security-automation, ai-agents, llm, claude-ai, mitre-attack, gcp-security, threat-detection, multi-agent-system, streamlit, python, cybersecurity

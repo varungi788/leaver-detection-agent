@@ -196,8 +196,10 @@ def main():
         """)
 
         st.markdown("---")
-        st.markdown("### GitHub")
-        st.markdown("[View Source Code](https://github.com/varungi788/leaver-detection-agent)")
+        st.markdown("### Links")
+        st.markdown("🌐 [Live Demo](https://leaver-detection-agent.streamlit.app)")
+        st.markdown("💻 [GitHub Repo](https://github.com/varungi788/leaver-detection-agent)")
+        st.markdown("📚 [MITRE Matrix](https://insiderthreatmatrix.org/)")
 
     # Load demo report
     report = create_demo_report()

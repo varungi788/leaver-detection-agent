@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaver Detection System - Demo Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0E1117 0%, #1a1d29 100%);
+            color: #FAFAFA;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #262730;
+            padding: 2rem;
+            border-bottom: 3px solid #FF4B4B;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header p {
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: #262730;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #FF4B4B;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #b3b3b3;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: #FF4B4B;
+        }
+
+        .section {
+            background: #262730;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #FF4B4B;
+        }
+
+        .employee-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: #1a1d29;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #FF4B4B;
+            margin-bottom: 0.5rem;
+        }
+
+        .finding-card {
+            background: #1a1d29;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .finding-card.critical {
+            border-left-color: #FF4136;
+        }
+
+        .finding-card.high {
+            border-left-color: #FF851B;
+        }
+
+        .finding-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .finding-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.critical {
+            background: #FF4136;
+            color: white;
+        }
+
+        .badge.high {
+            background: #FF851B;
+            color: white;
+        }
+
+        .badge.data-exfil {
+            background: #2ECC40;
+            color: white;
+        }
+
+        .evidence-list {
+            background: #0E1117;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .evidence-item {
+            padding: 0.5rem;
+            margin: 0.3rem 0;
+            border-left: 3px solid #FF4B4B;
+            padding-left: 1rem;
+        }
+
+        .chart-container {
+            background: #1a1d29;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .bars {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-end;
+            height: 300px;
+            margin-top: 2rem;
+        }
+
+        .bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-fill {
+            width: 100%;
+            background: linear-gradient(to top, #FF4B4B, #ff6b6b);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 1rem;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .bar-fill:hover {
+            transform: scaleY(1.05);
+        }
+
+        .bar-label {
+            font-weight: 600;
+            color: #b3b3b3;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #FF4B4B;
+            border-radius: 50%;
+            border: 3px solid #262730;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 16px;
+            width: 2px;
+            height: calc(100% + 2rem);
+            background: #444;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-time {
+            color: #FF4B4B;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .timeline-content {
+            background: #1a1d29;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+
+        .alert {
+            background: #4a1a1a;
+            border: 2px solid #FF4136;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .alert-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-item {
+            background: #1a1d29;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            color: #b3b3b3;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FF4B4B;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            margin-top: 4rem;
+        }
+
+        .demo-badge {
+            background: #FF4B4B;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🔍 Leaver Detection Agentic System <span class="demo-badge">DEMO MODE</span></h1>
+            <p>AI-Powered Insider Threat Investigation Platform</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Top Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Risk Score</div>
+                <div class="metric-value">87.5/100</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Risk Level</div>
+                <div class="metric-value">🟠 HIGH</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Findings</div>
+                <div class="metric-value">4</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Execution Time</div>
+                <div class="metric-value">47s</div>
+            </div>
+        </div>
+
+        <!-- Employee Information -->
+        <div class="section">
+            <h2>👤 Employee Investigation</h2>
+            <div class="employee-info">
+                <div class="info-item">
+                    <div class="info-label">Name</div>
+                    <div>John Doe</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div>john.doe@company.com</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Department</div>
+                    <div>Engineering</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Role</div>
+                    <div>Senior Software Engineer</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Termination Date</div>
+                    <div>2026-10-02</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Investigation ID</div>
+                    <div>INV-demo001</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Findings Chart -->
+        <div class="section">
+            <h2>🎯 Findings Breakdown</h2>
+            <div class="chart-container">
+                <div class="bars">
+                    <div class="bar">
+                        <div class="bar-fill" style="height: 90%;">3</div>
+                        <div class="bar-label">Critical</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-fill" style="height: 30%; background: linear-gradient(to top, #FF851B, #ffb84d);">1</div>
+                        <div class="bar-label">High</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-fill" style="height: 0%; background: linear-gradient(to top, #FFDC00, #ffe766);">0</div>
+                        <div class="bar-label">Medium</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-fill" style="height: 0%; background: linear-gradient(to top, #2ECC40, #5edc70);">0</div>
+                        <div class="bar-label">Low</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Findings -->
+        <div class="section">
+            <h2>🚨 Critical Findings</h2>
+
+            <div class="finding-card critical">
+                <div class="finding-title">🔴 [1] Bulk File Download to Personal Account</div>
+                <div class="finding-meta">
+                    <span class="badge critical">Critical</span>
+                    <span class="badge data-exfil">Data Exfiltration</span>
+                    <span>Confidence: 95%</span>
+                </div>
+                <p><strong>Description:</strong> Employee downloaded 47 files (2.3 GB) from company-source-code bucket and shared to personal Gmail account (john.personal@gmail.com) over 2-day period. Files include proprietary source code, configuration files, and internal documentation.</p>
+
+                <div class="evidence-list">
+                    <div><strong>📂 Evidence:</strong></div>
+                    <div class="evidence-item">📄 app/core/authentication.py (2.3 MB) - 2026-09-30 14:23:00</div>
+                    <div class="evidence-item">📄 config/production_secrets.yaml (0.8 MB) - 2026-09-30 14:25:00</div>
+                    <div class="evidence-item">📄 docs/internal_architecture.pdf (15.2 MB) - 2026-10-01 22:15:00</div>
+                </div>
+
+                <p><strong>💼 Recommendation:</strong> IMMEDIATE ESCALATION TO LEGAL - Initiate legal hold, preserve all evidence</p>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-title">🔴 [2] Email Forwarding Rule to External Account</div>
+                <div class="finding-meta">
+                    <span class="badge critical">Critical</span>
+                    <span class="badge data-exfil">Data Exfiltration</span>
+                    <span>Confidence: 98%</span>
+                </div>
+                <p><strong>Description:</strong> Auto-forward email rule created to forward all incoming emails to john.personal@gmail.com. Rule created 3 days before termination date and remained active until account deactivation.</p>
+
+                <div class="evidence-list">
+                    <div><strong>📧 Evidence:</strong></div>
+                    <div class="evidence-item">🔀 Rule created: 2026-09-29 11:45:00</div>
+                    <div class="evidence-item">📨 Destination: john.personal@gmail.com</div>
+                    <div class="evidence-item">⏰ Status: Active until termination</div>
+                </div>
+
+                <p><strong>💼 Recommendation:</strong> Disable forwarding rule immediately, audit forwarded emails</p>
+            </div>
+
+            <div class="finding-card critical">
+                <div class="finding-title">🔴 [3] BigQuery Customer Data Export</div>
+                <div class="finding-meta">
+                    <span class="badge critical">Critical</span>
+                    <span class="badge data-exfil">Data Exfiltration</span>
+                    <span>Confidence: 92%</span>
+                </div>
+                <p><strong>Description:</strong> Exported customer analytics dataset (2.1M records) from BigQuery to external GCS bucket. Export includes PII, email addresses, and purchase history.</p>
+
+                <div class="evidence-list">
+                    <div><strong>🗄️ Evidence:</strong></div>
+                    <div class="evidence-item">📊 Dataset: customer_analytics.users</div>
+                    <div class="evidence-item">📈 Records: 2,100,000</div>
+                    <div class="evidence-item">📅 Timestamp: 2026-10-01 16:30:00</div>
+                </div>
+
+                <p><strong>💼 Recommendation:</strong> Legal hold on exported data, notify privacy team</p>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="section">
+            <h2>⏱️ Activity Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-09-29 11:45:00</div>
+                    <div class="timeline-content">
+                        <span class="badge critical">Critical</span>
+                        <strong>Email forwarding rule created</strong> - Auto-forward to personal Gmail account configured
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-09-30 14:23:00</div>
+                    <div class="timeline-content">
+                        <span class="badge critical">Critical</span>
+                        <strong>Bulk source code download started</strong> - 47 files from proprietary repositories
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-10-01 16:30:00</div>
+                    <div class="timeline-content">
+                        <span class="badge critical">Critical</span>
+                        <strong>BigQuery customer data export</strong> - 2.1M records with PII exported
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-10-01 22:15:00</div>
+                    <div class="timeline-content">
+                        <span class="badge high">High</span>
+                        <strong>After-hours file transfers</strong> - Suspicious activity outside normal business hours
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="section">
+            <h2>📊 Investigation Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Telemetry Records Reviewed</div>
+                    <div class="stat-value">727</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Anomalies Detected</div>
+                    <div class="stat-value">42</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">False Positives Suppressed</div>
+                    <div class="stat-value">8</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">FP Suppression Rate</div>
+                    <div class="stat-value">98.3%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="section">
+            <h2>📝 Executive Summary</h2>
+            <p style="line-height: 1.8;">Investigation of John Doe (john.doe@company.com) conducted on 2026-10-02 revealed a risk score of 87.5/100 (HIGH). Analysis of multiple findings across cloud storage, email, compute, and audit logs indicates deliberate data exfiltration activity during the week preceding the employee's termination date of 2026-10-02.</p>
+            <br>
+            <p style="line-height: 1.8;">The investigation identified three CRITICAL findings representing coordinated exfiltration across multiple attack vectors: (1) bulk download and sharing of 2.3 GB of proprietary source code to personal Gmail account, (2) creation of email forwarding rule to external address, and (3) export of customer analytics dataset containing 2.1M records with PII.</p>
+            <br>
+            <p style="line-height: 1.8;">Temporal analysis shows all suspicious activity concentrated in 72-hour window before termination, consistent with insider threat behavioral patterns. Evidence quality is high (confidence scores 0.92-0.98) with multiple corroborating data sources.</p>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="section">
+            <h2>💼 Recommendations</h2>
+            <div class="alert">
+                <strong style="font-size: 1.2rem;">⚠️ IMMEDIATE ESCALATION TO LEGAL</strong>
+                <p style="margin-top: 1rem;">Initiate legal hold, preserve all evidence, notify General Counsel</p>
+            </div>
+            <div class="alert">
+                <strong style="font-size: 1.2rem;">⚠️ LEGAL HOLD RECOMMENDED</strong>
+                <p style="margin-top: 1rem;">Preserve all evidence immediately - critical findings detected</p>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="employee-info">
+                <div class="info-item">
+                    <div class="info-label">AI/LLM</div>
+                    <div>Claude API (Anthropic)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Agent Framework</div>
+                    <div>LangGraph</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Backend</div>
+                    <div>Python 3.11+</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Dashboard</div>
+                    <div>Streamlit</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Agents</div>
+                    <div>4 Specialist Agents</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Detection Checks</div>
+                    <div>19+ Parallel Checks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Demo Report | Leaver Detection Agentic System</p>
+        <p style="margin-top: 0.5rem;">Built by Insider Risk Analyst with 5+ years experience</p>
+        <p style="margin-top: 0.5rem;"><a href="https://github.com/varungi788/leaver-detection-agent" style="color: #FF4B4B;">View on GitHub</a></p>
+    </div>
+</body>
+</html>
