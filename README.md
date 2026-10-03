@@ -25,6 +25,18 @@ This system automates the detection and investigation of potential data exfiltra
 
 Built to showcase enterprise-grade insider threat automation capabilities with simulated GCP telemetry data and aligned with industry-standard frameworks.
 
+## 🎓 New to Insider Threat Detection?
+
+**Start with the Training Simulator!** Before diving into the full multi-agent system, check out [`training_simulator/`](training_simulator/) for a beginner-friendly introduction:
+- ✅ Simple, easy-to-understand code
+- ✅ No API keys required
+- ✅ 5-minute setup
+- ✅ Learn core concepts: behavioral analysis, risk scoring, AI agents
+
+**[→ Start Training Here](training_simulator/README.md)**
+
+Then progress to the full system below for production-grade capabilities.
+
 ## 🏗️ Architecture
 
 ### Multi-Agent System
