@@ -117,6 +117,20 @@ python main.py --employee-id EMP001 --termination-date 2026-10-02
 streamlit run dashboard/app.py
 ```
 
+### 🤖 Using with Claude Code
+
+If you're using Claude Code CLI and want to skip permission prompts during development:
+
+```bash
+# Option 1: Bypass permissions (use cautiously)
+claude --dangerously-skip-permissions
+
+# Option 2: Permission mode bypass
+claude --permission-mode bypassPermissions
+```
+
+**⚠️ Security Note**: These flags bypass file operation permissions. Only use in trusted development environments.
+
 ## 📁 Project Structure
 ```
 leaver-detection-agent/

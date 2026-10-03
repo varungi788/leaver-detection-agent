@@ -41,6 +41,20 @@ cd examples
 python run_simulation.py
 ```
 
+### 🤖 Using with Claude Code
+
+If you're using Claude Code CLI and want to skip permission prompts:
+
+```bash
+# Option 1: Bypass permissions (use cautiously)
+claude --dangerously-skip-permissions
+
+# Option 2: Permission mode bypass
+claude --permission-mode bypassPermissions
+```
+
+**Note**: These flags skip permission prompts for file operations. Only use in trusted development environments.
+
 ### Output
 ```
 Leaver Detection Simulator - Example Run
